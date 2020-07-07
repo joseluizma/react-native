@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   SafeAreaView,
@@ -10,9 +10,21 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import api from './services/api';
+
 export default function App() {
+
+  const [repositories, setRepositories] = useState([]);
+
+  useEffect(() => {
+    api.get('repositories').then(response => {
+      setRepositories(response.data);
+    });
+  }, []);
+
+
   async function handleLikeRepository(id) {
-    // Implement "Like Repository" functionality
+    await api.post('/repositories/' + id / 'like');
   }
 
   return (
@@ -20,15 +32,22 @@ export default function App() {
       <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
       <SafeAreaView style={styles.container}>
         <View style={styles.repositoryContainer}>
-          <Text style={styles.repository}>Repository 1</Text>
+
+          {repositories.map(repositorie => (
+            <Text style={styles.repository} key={repositorie.id}>{repositorie.title}</Text>
+          ))}
 
           <View style={styles.techsContainer}>
-            <Text style={styles.tech}>
+            {/* <Text style={styles.tech}>
               ReactJS
             </Text>
             <Text style={styles.tech}>
               Node.js
-            </Text>
+            </Text> */}
+
+            {repositories.map(repositorie => (
+            <Text style={styles.tech} key={repositorie.id}>{repositorie.techs}</Text>
+          ))}
           </View>
 
           <View style={styles.likesContainer}>
